@@ -1,22 +1,32 @@
 import random
 
-# Constant settings
-RADIUS = 1
-NUM_POINTS = 1000000
-AREA_FACTOR = 4
-SQUARE_EXPONENT = 2
-POINT_COUNT_INCREMENT = 1
 
-inside_circle = 0
+RADIUS = 1.0
+NUM_SAMPLES = 1_000_000
 
-# Randomly generate points and count those inside the circle
-for _ in range(NUM_POINTS):
+
+def is_inside_unit_circle(x: float, y: float) -> bool:
+    return x**2 + y**2 <= RADIUS**2
+
+
+def sample_random_point() -> tuple[float, float]:
     x = random.uniform(-RADIUS, RADIUS)
-    y = random.uniform(-1, 1)
-    if x**SQUARE_EXPONENT + y**2 <= RADIUS**SQUARE_EXPONENT:
-        inside_circle += POINT_COUNT_INCREMENT
+    y = random.uniform(-RADIUS, RADIUS)
+    return x, y
 
-# Estimate pi based on the number of points inside the circle
-pi_neapple = (inside_circle / NUM_POINTS) * AREA_FACTOR
 
-print(f"Estimated value of pi is: {pi_neapple}")
+def estimate_pi(num_samples: int) -> float:
+    hits = sum(
+        1 for _ in range(num_samples)
+        if is_inside_unit_circle(*sample_random_point())
+    )
+    return (hits / num_samples) * 4
+
+
+def main() -> None:
+    pi_estimate = estimate_pi(NUM_SAMPLES)
+    print(f"Estimated value of pi: {pi_estimate}")
+
+
+if __name__ == "__main__":
+    main()
